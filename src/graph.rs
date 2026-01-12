@@ -1,4 +1,4 @@
-use std::{collections::VecDeque, mem::swap};
+#![allow(dead_code)]
 use cargo_snippet::snippet;
 
 #[snippet]
@@ -16,7 +16,7 @@ fn bfs() {
     let n = 0;
     let g = vec![vec![]];
     let mut dist = vec![!0; n];
-    let mut q = VecDeque::new();
+    let mut q = std::collections::VecDeque::new();
     q.push_back(0);
     dist[0] = 0;
     while let Some(pos) = q.pop_front() {
@@ -29,14 +29,19 @@ fn bfs() {
     }
 }
 
+#[snippet("uf")]
 struct UnionFind {
     par: Vec<usize>,
-    siz: Vec<usize>
+    siz: Vec<usize>,
 }
 
+#[snippet("uf")]
 impl UnionFind {
     fn new(n: usize) -> Self {
-        Self { par: (0..n).collect(), siz: vec![1; n] }
+        Self {
+            par: (0..n).collect(),
+            siz: vec![1; n],
+        }
     }
 
     fn root(&mut self, x: usize) -> usize {
@@ -51,13 +56,13 @@ impl UnionFind {
     fn unite(&mut self, mut parent: usize, mut child: usize) -> usize {
         parent = self.root(parent);
         child = self.root(child);
-        
+
         if parent == child {
             return parent;
         }
 
         if self.siz[parent] < self.siz[child] {
-            swap(&mut parent, &mut child);
+            std::mem::swap(&mut parent, &mut child);
         }
 
         self.par[child] = parent;
