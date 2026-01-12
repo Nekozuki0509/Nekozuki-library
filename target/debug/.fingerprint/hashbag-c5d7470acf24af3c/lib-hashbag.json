@@ -1,1 +1,0 @@
-{"rustc":4758242423518056681,"features":"[]","declared_features":"[\"amortize\", \"griddle\", \"serde\"]","target":3810585263526629691,"profile":2241668132362809309,"path":7321445723225824715,"deps":[],"local":[{"CheckDepInfo":{"dep_info":"debug/.fingerprint/hashbag-c5d7470acf24af3c/dep-lib-hashbag","checksum":false}}],"rustflags":[],"config":2069994364910194474,"compile_kind":0}
