@@ -1,21 +1,20 @@
-#![allow(dead_code)]
-use cargo_snippet::snippet;
+use cargo_snippet_more::snippet;
 
-#[snippet = "pos"]
+#[snippet("pos")]
 #[proconio::derive_readable]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
-struct Pos {
+pub struct Pos {
     x: usize,
     y: usize,
 }
 
-#[snippet = "pos"]
+#[snippet("pos")]
 impl Pos {
-    fn new(x: usize, y: usize) -> Self {
+    pub fn new(x: usize, y: usize) -> Self {
         Self { x, y }
     }
 
-    fn new_if_is_valid(&self, d: UnsafePos, n: usize) -> Option<Self> {
+    pub fn new_if_is_valid(&self, d: UnsafePos, n: usize) -> Option<Self> {
         let next = UnsafePos::new(self.x as isize + d.x, self.y as isize + d.y);
         if next.is_valid(n as isize) {
             Some(Self::new(next.x as usize, next.y as usize))
@@ -25,46 +24,46 @@ impl Pos {
     }
 }
 
-#[snippet = "unsafe_pos"]
+#[snippet("unsafe_pos")]
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct UnsafePos {
+pub struct UnsafePos {
     x: isize,
     y: isize,
 }
 
-#[snippet = "unsafe_pos"]
+#[snippet("unsafe_pos")]
 impl UnsafePos {
-    const fn new(x: isize, y: isize) -> Self {
+    pub const fn new(x: isize, y: isize) -> Self {
         Self { x, y }
     }
 
-    fn is_valid(&self, n: isize) -> bool {
+    pub fn is_valid(&self, n: isize) -> bool {
         0 <= self.x && self.x < n && 0 <= self.y && self.y < n
     }
 }
 
-#[snippet = "grid"]
-struct Grid<T> {
+#[snippet("grid")]
+pub struct Grid<T> {
     g: Vec<Vec<T>>,
 }
 
-#[snippet = "grid"]
+#[snippet("grid")]
 impl<T: Clone> Grid<T> {
-    fn new(n: usize) -> Self {
+    pub fn new(n: usize) -> Self {
         Self { g: vec![vec![]; n] }
     }
 
-    fn new_with_default(n: usize, d: T) -> Self {
+    pub fn new_with_default(n: usize, d: T) -> Self {
         Self {
             g: vec![vec![d; n]; n],
         }
     }
 
-    fn iter(&self) -> impl Iterator<Item = &Vec<T>> {
+    pub fn iter(&self) -> impl Iterator<Item = &Vec<T>> {
         self.g.iter()
     }
 
-    fn pos_iter(&self) -> impl Iterator<Item = (Pos, &T)> {
+    pub fn pos_iter(&self) -> impl Iterator<Item = (Pos, &T)> {
         self.iter().enumerate().flat_map(|(i, row)| {
             row.iter()
                 .enumerate()
@@ -73,7 +72,7 @@ impl<T: Clone> Grid<T> {
     }
 }
 
-#[snippet = "grid"]
+#[snippet("grid")]
 impl<T> std::ops::Index<usize> for Grid<T> {
     type Output = Vec<T>;
 
@@ -82,14 +81,14 @@ impl<T> std::ops::Index<usize> for Grid<T> {
     }
 }
 
-#[snippet = "grid"]
+#[snippet("grid")]
 impl<T> std::ops::IndexMut<usize> for Grid<T> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.g[index]
     }
 }
 
-#[snippet = "grid"]
+#[snippet("grid")]
 impl<T> std::ops::Index<Pos> for Grid<T> {
     type Output = T;
 
@@ -98,28 +97,28 @@ impl<T> std::ops::Index<Pos> for Grid<T> {
     }
 }
 
-#[snippet = "grid"]
+#[snippet("grid")]
 impl<T> std::ops::IndexMut<Pos> for Grid<T> {
     fn index_mut(&mut self, index: Pos) -> &mut Self::Output {
         &mut self[index.x][index.y]
     }
 }
 
-#[snippet = "vec_util"]
-trait VecUtil<T> {
+#[snippet("vec_util")]
+pub trait VecUtil<T> {
     fn get_or_default(&self, i: usize) -> T;
 }
 
-#[snippet = "vec_util"]
+#[snippet("vec_util")]
 impl<T: Default + Copy> VecUtil<T> for Vec<T> {
     fn get_or_default(self: &Vec<T>, i: usize) -> T {
         self.get(i).copied().unwrap_or_default()
     }
 }
 
-#[snippet = "direction"]
+#[snippet("direction")]
 #[derive(PartialEq, Eq, Hash, Clone, Copy, Debug, Default)]
-enum Direction {
+pub enum Direction {
     #[default]
     U,
     D,
@@ -128,7 +127,7 @@ enum Direction {
     S,
 }
 
-#[snippet = "direction"]
+#[snippet("direction")]
 impl std::fmt::Display for Direction {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let v = match self {
@@ -144,9 +143,9 @@ impl std::fmt::Display for Direction {
     }
 }
 
-#[snippet = "direction"]
+#[snippet("direction")]
 impl Direction {
-    fn to_unsafe_pos(&self) -> UnsafePos {
+    pub fn to_unsafe_pos(&self) -> UnsafePos {
         match self {
             Self::U => UnsafePos::new(-1, 0),
             Self::D => UnsafePos::new(1, 0),

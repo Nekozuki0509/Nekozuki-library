@@ -1,8 +1,7 @@
-#![allow(dead_code)]
-use cargo_snippet::snippet;
+use cargo_snippet_more::snippet;
 
 #[snippet]
-fn dfs(pos: usize, g: &Vec<Vec<usize>>, visited: &mut Vec<bool>) {
+pub fn dfs(pos: usize, g: &Vec<Vec<usize>>, visited: &mut Vec<bool>) {
     visited[pos] = true;
     for &i in &g[pos] {
         if !visited[i] {
@@ -12,7 +11,7 @@ fn dfs(pos: usize, g: &Vec<Vec<usize>>, visited: &mut Vec<bool>) {
 }
 
 #[snippet]
-fn bfs() {
+pub fn bfs() {
     let n = 0;
     let g = vec![vec![]];
     let mut dist = vec![!0; n];
@@ -30,21 +29,21 @@ fn bfs() {
 }
 
 #[snippet("uf")]
-struct UnionFind {
+pub struct UnionFind {
     par: Vec<usize>,
     siz: Vec<usize>,
 }
 
 #[snippet("uf")]
 impl UnionFind {
-    fn new(n: usize) -> Self {
+    pub fn new(n: usize) -> Self {
         Self {
             par: (0..n).collect(),
             siz: vec![1; n],
         }
     }
 
-    fn root(&mut self, x: usize) -> usize {
+    pub fn root(&mut self, x: usize) -> usize {
         if self.par[x] == x {
             return x;
         }
@@ -53,7 +52,7 @@ impl UnionFind {
         self.par[x]
     }
 
-    fn unite(&mut self, mut parent: usize, mut child: usize) -> usize {
+    pub fn unite(&mut self, mut parent: usize, mut child: usize) -> usize {
         parent = self.root(parent);
         child = self.root(child);
 
@@ -71,11 +70,11 @@ impl UnionFind {
         parent
     }
 
-    fn is_same(&mut self, u: usize, v: usize) -> bool {
+    pub fn is_same(&mut self, u: usize, v: usize) -> bool {
         self.root(u) == self.root(v)
     }
 
-    fn size(&mut self, x: usize) -> usize {
+    pub fn size(&mut self, x: usize) -> usize {
         let root = self.root(x);
         self.siz[root]
     }

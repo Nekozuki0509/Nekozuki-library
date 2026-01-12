@@ -3,61 +3,61 @@
 [library.childs.ahc.files.Direction]
 name = "direction"
 dependencies = []
-content = '# [derive (PartialEq , Eq , Hash , Clone , Copy , Debug , Default ) ] enum Direction {# [default ] U , D , L , R , S , } impl std :: fmt :: Display for Direction {fn fmt (& self , f : & mut std :: fmt :: Formatter ) -> std :: fmt :: Result {let v = match self {Self :: U => "U" , Self :: D => "D" , Self :: L => "L" , Self :: R => "R" , Self :: S => "S" , } ; write ! (f , "{}" , v ) ? ; Ok (() ) } } impl Direction {fn to_unsafe_pos (& self ) -> UnsafePos {match self {Self :: U => UnsafePos :: new (- 1 , 0 ) , Self :: D => UnsafePos :: new (1 , 0 ) , Self :: L => UnsafePos :: new (0 , - 1 ) , Self :: R => UnsafePos :: new (0 , 1 ) , Self :: S => UnsafePos :: new (0 , 0 ) , } } } '
+content = '# [derive (PartialEq , Eq , Hash , Clone , Copy , Debug , Default ) ] pub enum Direction {# [default ] U , D , L , R , S , } impl std :: fmt :: Display for Direction {fn fmt (& self , f : & mut std :: fmt :: Formatter ) -> std :: fmt :: Result {let v = match self {Self :: U => "U" , Self :: D => "D" , Self :: L => "L" , Self :: R => "R" , Self :: S => "S" , } ; write ! (f , "{}" , v ) ? ; Ok (() ) } } impl Direction {pub fn to_unsafe_pos (& self ) -> UnsafePos {match self {Self :: U => UnsafePos :: new (- 1 , 0 ) , Self :: D => UnsafePos :: new (1 , 0 ) , Self :: L => UnsafePos :: new (0 , - 1 ) , Self :: R => UnsafePos :: new (0 , 1 ) , Self :: S => UnsafePos :: new (0 , 0 ) , } } } '
 
 [library.childs.ahc.files.Grid]
 name = "grid"
 dependencies = []
-content = "struct Grid < T > {g : Vec < Vec < T > > , } impl < T : Clone > Grid < T > {fn new (n : usize ) -> Self {Self {g : vec ! [vec ! [] ; n ] } } fn new_with_default (n : usize , d : T ) -> Self {Self {g : vec ! [vec ! [d ; n ] ; n ] , } } fn iter (& self ) -> impl Iterator < Item = & Vec < T > > {self . g . iter () } fn pos_iter (& self ) -> impl Iterator < Item = (Pos , & T ) > {self . iter () . enumerate () . flat_map (| (i , row ) | {row . iter () . enumerate () . map (move | (j , v ) | (Pos :: new (i , j ) , v ) ) } ) } } impl < T > std :: ops :: Index < usize > for Grid < T > {type Output = Vec < T > ; fn index (& self , index : usize ) -> & Self :: Output {& self . g [index ] } } impl < T > std :: ops :: IndexMut < usize > for Grid < T > {fn index_mut (& mut self , index : usize ) -> & mut Self :: Output {& mut self . g [index ] } } impl < T > std :: ops :: Index < Pos > for Grid < T > {type Output = T ; fn index (& self , index : Pos ) -> & Self :: Output {& self [index . x ] [index . y ] } } impl < T > std :: ops :: IndexMut < Pos > for Grid < T > {fn index_mut (& mut self , index : Pos ) -> & mut Self :: Output {& mut self [index . x ] [index . y ] } } "
+content = "pub struct Grid < T > {g : Vec < Vec < T > > , } impl < T : Clone > Grid < T > {pub fn new (n : usize ) -> Self {Self {g : vec ! [vec ! [] ; n ] } } pub fn new_with_default (n : usize , d : T ) -> Self {Self {g : vec ! [vec ! [d ; n ] ; n ] , } } pub fn iter (& self ) -> impl Iterator < Item = & Vec < T > > {self . g . iter () } pub fn pos_iter (& self ) -> impl Iterator < Item = (Pos , & T ) > {self . iter () . enumerate () . flat_map (| (i , row ) | {row . iter () . enumerate () . map (move | (j , v ) | (Pos :: new (i , j ) , v ) ) } ) } } impl < T > std :: ops :: Index < usize > for Grid < T > {type Output = Vec < T > ; fn index (& self , index : usize ) -> & Self :: Output {& self . g [index ] } } impl < T > std :: ops :: IndexMut < usize > for Grid < T > {fn index_mut (& mut self , index : usize ) -> & mut Self :: Output {& mut self . g [index ] } } impl < T > std :: ops :: Index < Pos > for Grid < T > {type Output = T ; fn index (& self , index : Pos ) -> & Self :: Output {& self [index . x ] [index . y ] } } impl < T > std :: ops :: IndexMut < Pos > for Grid < T > {fn index_mut (& mut self , index : Pos ) -> & mut Self :: Output {& mut self [index . x ] [index . y ] } } "
 
 [library.childs.ahc.files.Pos]
 name = "pos"
 dependencies = []
-content = "# [proconio :: derive_readable ] # [derive (Debug , Clone , Copy , PartialEq , Eq , Hash , Default ) ] struct Pos {x : usize , y : usize , } impl Pos {fn new (x : usize , y : usize ) -> Self {Self {x , y } } fn new_if_is_valid (& self , d : UnsafePos , n : usize ) -> Option < Self > {let next = UnsafePos :: new (self . x as isize + d . x , self . y as isize + d . y ) ; if next . is_valid (n as isize ) {Some (Self :: new (next . x as usize , next . y as usize ) ) } else {None } } } "
+content = "# [proconio :: derive_readable ] # [derive (Debug , Clone , Copy , PartialEq , Eq , Hash , Default ) ] pub struct Pos {x : usize , y : usize , } impl Pos {pub fn new (x : usize , y : usize ) -> Self {Self {x , y } } pub fn new_if_is_valid (& self , d : UnsafePos , n : usize ) -> Option < Self > {let next = UnsafePos :: new (self . x as isize + d . x , self . y as isize + d . y ) ; if next . is_valid (n as isize ) {Some (Self :: new (next . x as usize , next . y as usize ) ) } else {None } } } "
 
 [library.childs.ahc.files.UnsafePos]
 name = "unsafe_pos"
 dependencies = []
-content = "# [derive (Debug , Clone , Copy , PartialEq ) ] struct UnsafePos {x : isize , y : isize , } impl UnsafePos {const fn new (x : isize , y : isize ) -> Self {Self {x , y } } fn is_valid (& self , n : isize ) -> bool {0 <= self . x && self . x < n && 0 <= self . y && self . y < n } } "
+content = "# [derive (Debug , Clone , Copy , PartialEq ) ] pub struct UnsafePos {x : isize , y : isize , } impl UnsafePos {pub const fn new (x : isize , y : isize ) -> Self {Self {x , y } } pub fn is_valid (& self , n : isize ) -> bool {0 <= self . x && self . x < n && 0 <= self . y && self . y < n } } "
 
 [library.childs.ahc.files.VecUtil]
 name = "vec_util"
 dependencies = []
-content = "trait VecUtil < T > {fn get_or_default (& self , i : usize ) -> T ; } impl < T : Default + Copy > VecUtil < T > for Vec < T > {fn get_or_default (self : & Vec < T > , i : usize ) -> T {self . get (i ) . copied () . unwrap_or_default () } } "
+content = "pub trait VecUtil < T > {fn get_or_default (& self , i : usize ) -> T ; } impl < T : Default + Copy > VecUtil < T > for Vec < T > {fn get_or_default (self : & Vec < T > , i : usize ) -> T {self . get (i ) . copied () . unwrap_or_default () } } "
 
 [library.childs.common.childs]
 
 [library.childs.common.files.gcd]
-name = "math"
-dependencies = ["gcd"]
-content = "fn gcd (a : u64 , b : u64 ) -> u64 {if b == 0 {a } else {gcd (b , a % b ) } } fn gcd_list (list : & [u64 ] ) -> u64 {list . iter () . fold (list [0 ] , | a , & b | gcd (a , b ) ) } fn lcm (a : u64 , b : u64 ) -> u64 {a / gcd (a , b ) * b } "
+name = "gcd"
+dependencies = []
+content = "pub fn gcd (a : u64 , b : u64 ) -> u64 {if b == 0 {a } else {gcd (b , a % b ) } } "
 
 [library.childs.common.files.gcd_list]
 name = "gcd_list"
 dependencies = ["gcd"]
-content = "fn gcd_list (list : & [u64 ] ) -> u64 {list . iter () . fold (list [0 ] , | a , & b | gcd (a , b ) ) } "
+content = "pub fn gcd_list (list : & [u64 ] ) -> u64 {list . iter () . fold (list [0 ] , | a , & b | gcd (a , b ) ) } "
 
 [library.childs.common.files.lcm]
 name = "lcm"
 dependencies = []
-content = "fn lcm (a : u64 , b : u64 ) -> u64 {a / gcd (a , b ) * b } "
+content = "pub fn lcm (a : u64 , b : u64 ) -> u64 {a / gcd (a , b ) * b } "
 
 [library.childs.graph.childs]
 
 [library.childs.graph.files.UnionFind]
 name = "uf"
 dependencies = []
-content = "struct UnionFind {par : Vec < usize > , siz : Vec < usize > , } impl UnionFind {fn new (n : usize ) -> Self {Self {par : (0 .. n ) . collect () , siz : vec ! [1 ; n ] , } } fn root (& mut self , x : usize ) -> usize {if self . par [x ] == x {return x ; } self . par [x ] = self . root (self . par [x ] ) ; self . par [x ] } fn unite (& mut self , mut parent : usize , mut child : usize ) -> usize {parent = self . root (parent ) ; child = self . root (child ) ; if parent == child {return parent ; } if self . siz [parent ] < self . siz [child ] {std :: mem :: swap (& mut parent , & mut child ) ; } self . par [child ] = parent ; self . siz [parent ] += self . siz [child ] ; parent } fn is_same (& mut self , u : usize , v : usize ) -> bool {self . root (u ) == self . root (v ) } fn size (& mut self , x : usize ) -> usize {let root = self . root (x ) ; self . siz [root ] } } "
+content = "pub struct UnionFind {par : Vec < usize > , siz : Vec < usize > , } impl UnionFind {pub fn new (n : usize ) -> Self {Self {par : (0 .. n ) . collect () , siz : vec ! [1 ; n ] , } } pub fn root (& mut self , x : usize ) -> usize {if self . par [x ] == x {return x ; } self . par [x ] = self . root (self . par [x ] ) ; self . par [x ] } pub fn unite (& mut self , mut parent : usize , mut child : usize ) -> usize {parent = self . root (parent ) ; child = self . root (child ) ; if parent == child {return parent ; } if self . siz [parent ] < self . siz [child ] {std :: mem :: swap (& mut parent , & mut child ) ; } self . par [child ] = parent ; self . siz [parent ] += self . siz [child ] ; parent } pub fn is_same (& mut self , u : usize , v : usize ) -> bool {self . root (u ) == self . root (v ) } pub fn size (& mut self , x : usize ) -> usize {let root = self . root (x ) ; self . siz [root ] } } "
 
 [library.childs.graph.files.bfs]
 name = "bfs"
 dependencies = []
-content = "fn bfs () {let n = 0 ; let g = vec ! [vec ! [] ] ; let mut dist = vec ! [! 0 ; n ] ; let mut q = std :: collections :: VecDeque :: new () ; q . push_back (0 ) ; dist [0 ] = 0 ; while let Some (pos ) = q . pop_front () {for & i in & g [pos ] {if dist [i ] == - 1 {dist [i ] = dist [pos ] + 1 ; q . push_back (i ) ; } } } } "
+content = "pub fn bfs () {let n = 0 ; let g = vec ! [vec ! [] ] ; let mut dist = vec ! [! 0 ; n ] ; let mut q = std :: collections :: VecDeque :: new () ; q . push_back (0 ) ; dist [0 ] = 0 ; while let Some (pos ) = q . pop_front () {for & i in & g [pos ] {if dist [i ] == - 1 {dist [i ] = dist [pos ] + 1 ; q . push_back (i ) ; } } } } "
 
 [library.childs.graph.files.dfs]
 name = "dfs"
 dependencies = []
-content = "fn dfs (pos : usize , g : & Vec < Vec < usize > > , visited : & mut Vec < bool > ) {visited [pos ] = true ; for & i in & g [pos ] {if ! visited [i ] {dfs (i , g , visited ) ; } } } "
+content = "pub fn dfs (pos : usize , g : & Vec < Vec < usize > > , visited : & mut Vec < bool > ) {visited [pos ] = true ; for & i in & g [pos ] {if ! visited [i ] {dfs (i , g , visited ) ; } } } "
 
 [library.files]
 
@@ -102,12 +102,6 @@ Path = "common"
 
 [[pathes.lcm]]
 Name = "lcm"
-
-[[pathes.math]]
-Path = "common"
-
-[[pathes.math]]
-Name = "gcd"
 
 [[pathes.pos]]
 Path = "ahc"
