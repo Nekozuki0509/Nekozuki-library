@@ -1,6 +1,6 @@
-use cargo_snippet_more::snippet;
+use cargo_snippet_more::{snippet, snippet_end, snippet_start};
 
-#[snippet("pos")]
+snippet_start!("pos");
 #[proconio::derive_readable]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub struct Pos {
@@ -8,7 +8,6 @@ pub struct Pos {
     y: usize,
 }
 
-#[snippet("pos")]
 impl Pos {
     pub fn new(x: usize, y: usize) -> Self {
         Self { x, y }
@@ -24,14 +23,13 @@ impl Pos {
     }
 }
 
-#[snippet("unsafe_pos")]
+snippet_start!("unsafe_pos");
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct UnsafePos {
     x: isize,
     y: isize,
 }
 
-#[snippet("unsafe_pos")]
 impl UnsafePos {
     pub const fn new(x: isize, y: isize) -> Self {
         Self { x, y }
@@ -41,13 +39,14 @@ impl UnsafePos {
         0 <= self.x && self.x < n && 0 <= self.y && self.y < n
     }
 }
+snippet_end!("unsafe_pos");
+snippet_end!("pos");
 
-#[snippet("grid")]
+snippet_start!(name = "grid", include = "pos");
 pub struct Grid<T> {
     g: Vec<Vec<T>>,
 }
 
-#[snippet("grid")]
 impl<T: Clone> Grid<T> {
     pub fn new(n: usize) -> Self {
         Self { g: vec![vec![]; n] }
@@ -103,20 +102,21 @@ impl<T> std::ops::IndexMut<Pos> for Grid<T> {
         &mut self[index.x][index.y]
     }
 }
+snippet_end!("grid");
 
-#[snippet("vec_util")]
+snippet_start!("vec_util");
 pub trait VecUtil<T> {
     fn get_or_default(&self, i: usize) -> T;
 }
 
-#[snippet("vec_util")]
 impl<T: Default + Copy> VecUtil<T> for Vec<T> {
     fn get_or_default(self: &Vec<T>, i: usize) -> T {
         self.get(i).copied().unwrap_or_default()
     }
 }
+snippet_end!("vec_util");
 
-#[snippet("direction")]
+snippet_start!("direction");
 #[derive(PartialEq, Eq, Hash, Clone, Copy, Debug, Default)]
 pub enum Direction {
     #[default]
@@ -127,7 +127,6 @@ pub enum Direction {
     S,
 }
 
-#[snippet("direction")]
 impl std::fmt::Display for Direction {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let v = match self {
@@ -143,7 +142,6 @@ impl std::fmt::Display for Direction {
     }
 }
 
-#[snippet("direction")]
 impl Direction {
     pub fn to_unsafe_pos(&self) -> UnsafePos {
         match self {
@@ -155,3 +153,4 @@ impl Direction {
         }
     }
 }
+snippet_end!("direction");

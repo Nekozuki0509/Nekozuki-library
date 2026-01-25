@@ -245,9 +245,14 @@ name = "cargo-snippet-more"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "cargo-snippet-more-macros",
  "cargo_metadata",
  "toml",
 ]
+
+[[package]]
+name = "cargo-snippet-more-macros"
+version = "0.1.0"
 
 [[package]]
 name = "cargo_metadata"

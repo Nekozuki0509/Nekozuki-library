@@ -88,4 +88,4 @@ smallvec = { version = "=1.15.1", features = [
     "serde",
     "arbitrary",
 ] }
-cargo-snippet-more = { path = "../cargo-snippet-more/" }
+cargo-snippet-more = { path = "../cargo-snippet-more/cargo-snippet-more" }

@@ -1,4 +1,4 @@
-use cargo_snippet_more::snippet;
+use cargo_snippet_more::{snippet, snippet_end, snippet_start};
 
 #[snippet]
 pub fn dfs(pos: usize, g: &Vec<Vec<usize>>, visited: &mut Vec<bool>) {
@@ -10,10 +10,10 @@ pub fn dfs(pos: usize, g: &Vec<Vec<usize>>, visited: &mut Vec<bool>) {
     }
 }
 
-#[snippet]
 pub fn bfs() {
     let n = 0;
     let g = vec![vec![]];
+    snippet_start!("bfs");
     let mut dist = vec![!0; n];
     let mut q = std::collections::VecDeque::new();
     q.push_back(0);
@@ -26,15 +26,17 @@ pub fn bfs() {
             }
         }
     }
+    snippet_end!("bfs");
 }
 
-#[snippet("uf")]
+snippet_start!("uf");
+//#[snippet("uf")]
 pub struct UnionFind {
     par: Vec<usize>,
     siz: Vec<usize>,
 }
 
-#[snippet("uf")]
+//#[snippet("uf")]
 impl UnionFind {
     pub fn new(n: usize) -> Self {
         Self {
@@ -79,3 +81,4 @@ impl UnionFind {
         self.siz[root]
     }
 }
+snippet_end!("uf");
