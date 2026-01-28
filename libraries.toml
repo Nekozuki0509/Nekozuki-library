@@ -2,32 +2,32 @@
 
 [library.childs.ahc.files.""]
 name = "grid"
-dependencies = ["pos"]
-content = "impl < T > std :: ops :: Index < usize > for Grid < T > {type Output = Vec < T > ; fn index (& self , index : usize ) -> & Self :: Output {& self . g [index ] } } impl < T > std :: ops :: Index < usize > for Grid < T > {type Output = Vec < T > ; fn index (& self , index : usize ) -> & Self :: Output {& self . g [index ] } } impl < T > std :: ops :: IndexMut < usize > for Grid < T > {fn index_mut (& mut self , index : usize ) -> & mut Self :: Output {& mut self . g [index ] } } impl < T > std :: ops :: Index < Pos > for Grid < T > {type Output = T ; fn index (& self , index : Pos ) -> & Self :: Output {& self [index . x ] [index . y ] } } impl < T > std :: ops :: IndexMut < Pos > for Grid < T > {fn index_mut (& mut self , index : Pos ) -> & mut Self :: Output {& mut self [index . x ] [index . y ] } } "
+dependencies = []
+content = "impl < T > std :: ops :: Index < usize > for Grid < T > {type Output = Vec < T > ; fn index (& self , index : usize ) -> & Self :: Output {& self . g [index ] } } impl < T > std :: ops :: IndexMut < usize > for Grid < T > {fn index_mut (& mut self , index : usize ) -> & mut Self :: Output {& mut self . g [index ] } } impl < T > std :: ops :: Index < Pos > for Grid < T > {type Output = T ; fn index (& self , index : Pos ) -> & Self :: Output {& self [index . x ] [index . y ] } } impl < T > std :: ops :: IndexMut < Pos > for Grid < T > {fn index_mut (& mut self , index : Pos ) -> & mut Self :: Output {& mut self [index . x ] [index . y ] } } "
 
 [library.childs.common.childs]
 
 [library.childs.common.files.gcd]
-name = "gcd"
+name = "math"
 dependencies = []
-content = "pub fn gcd (a : u64 , b : u64 ) -> u64 {if b == 0 {a } else {gcd (b , a % b ) } } pub fn gcd (a : u64 , b : u64 ) -> u64 {if b == 0 {a } else {gcd (b , a % b ) } } "
+content = "pub fn gcd (a : u64 , b : u64 ) -> u64 {if b == 0 {a } else {gcd (b , a % b ) } } pub fn lcm (a : u64 , b : u64 ) -> u64 {a / gcd (a , b ) * b } "
 
 [library.childs.common.files.gcd_list]
 name = "gcd_list"
 dependencies = ["gcd"]
-content = "pub fn gcd_list (list : & [u64 ] ) -> u64 {list . iter () . fold (list [0 ] , | a , & b | gcd (a , b ) ) } pub fn gcd_list (list : & [u64 ] ) -> u64 {list . iter () . fold (list [0 ] , | a , & b | gcd (a , b ) ) } "
+content = "pub fn gcd_list (list : & [u64 ] ) -> u64 {list . iter () . fold (list [0 ] , | a , & b | gcd (a , b ) ) } "
 
 [library.childs.common.files.lcm]
 name = "lcm"
 dependencies = []
-content = "pub fn lcm (a : u64 , b : u64 ) -> u64 {a / gcd (a , b ) * b } pub fn lcm (a : u64 , b : u64 ) -> u64 {a / gcd (a , b ) * b } "
+content = "pub fn lcm (a : u64 , b : u64 ) -> u64 {a / gcd (a , b ) * b } "
 
 [library.childs.graph.childs]
 
 [library.childs.graph.files.dfs]
 name = "dfs"
 dependencies = []
-content = "pub fn dfs (pos : usize , g : & Vec < Vec < usize > > , visited : & mut Vec < bool > ) {visited [pos ] = true ; for & i in & g [pos ] {if ! visited [i ] {dfs (i , g , visited ) ; } } } pub fn dfs (pos : usize , g : & Vec < Vec < usize > > , visited : & mut Vec < bool > ) {visited [pos ] = true ; for & i in & g [pos ] {if ! visited [i ] {dfs (i , g , visited ) ; } } } "
+content = "pub fn dfs (pos : usize , g : & Vec < Vec < usize > > , visited : & mut Vec < bool > ) {visited [pos ] = true ; for & i in & g [pos ] {if ! visited [i ] {dfs (i , g , visited ) ; } } } "
 
 [library.files]
 
@@ -60,3 +60,9 @@ Path = "common"
 
 [[pathes.lcm]]
 Name = "lcm"
+
+[[pathes.math]]
+Path = "common"
+
+[[pathes.math]]
+Name = "gcd"

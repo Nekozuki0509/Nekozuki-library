@@ -29,7 +29,7 @@ pub fn bfs() {
     snippet_end!("bfs");
 }
 
-snippet_start!("uf");
+snippet_start!("uf", library = "UnionFind");
 //#[snippet("uf")]
 pub struct UnionFind {
     par: Vec<usize>,

@@ -1,6 +1,6 @@
 use cargo_snippet_more::{snippet, snippet_end, snippet_start};
 
-snippet_start!("pos");
+snippet_start!("pos", library = "Pos");
 #[proconio::derive_readable]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub struct Pos {
@@ -22,8 +22,9 @@ impl Pos {
         }
     }
 }
+snippet_end!("pos");
 
-snippet_start!("unsafe_pos");
+snippet_start!("unsafe_pos", library = "UnsafePos");
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct UnsafePos {
     x: isize,
@@ -40,9 +41,8 @@ impl UnsafePos {
     }
 }
 snippet_end!("unsafe_pos");
-snippet_end!("pos");
 
-snippet_start!(name = "grid", include = "pos");
+snippet_start!(name = "grid", include = "pos", library = "Grid");
 pub struct Grid<T> {
     g: Vec<Vec<T>>,
 }
@@ -71,7 +71,6 @@ impl<T: Clone> Grid<T> {
     }
 }
 
-#[snippet("grid")]
 impl<T> std::ops::Index<usize> for Grid<T> {
     type Output = Vec<T>;
 
@@ -80,14 +79,12 @@ impl<T> std::ops::Index<usize> for Grid<T> {
     }
 }
 
-#[snippet("grid")]
 impl<T> std::ops::IndexMut<usize> for Grid<T> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.g[index]
     }
 }
 
-#[snippet("grid")]
 impl<T> std::ops::Index<Pos> for Grid<T> {
     type Output = T;
 
@@ -96,7 +93,6 @@ impl<T> std::ops::Index<Pos> for Grid<T> {
     }
 }
 
-#[snippet("grid")]
 impl<T> std::ops::IndexMut<Pos> for Grid<T> {
     fn index_mut(&mut self, index: Pos) -> &mut Self::Output {
         &mut self[index.x][index.y]
@@ -104,7 +100,7 @@ impl<T> std::ops::IndexMut<Pos> for Grid<T> {
 }
 snippet_end!("grid");
 
-snippet_start!("vec_util");
+snippet_start!("vec_util", library = "VecUtil");
 pub trait VecUtil<T> {
     fn get_or_default(&self, i: usize) -> T;
 }
@@ -116,7 +112,7 @@ impl<T: Default + Copy> VecUtil<T> for Vec<T> {
 }
 snippet_end!("vec_util");
 
-snippet_start!("direction");
+snippet_start!("direction", library = "Direction", include = "unsafe_pos");
 #[derive(PartialEq, Eq, Hash, Clone, Copy, Debug, Default)]
 pub enum Direction {
     #[default]
