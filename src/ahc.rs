@@ -1,6 +1,6 @@
-use cargo_snippet_more::{snippet, snippet_end, snippet_start};
+use cargo_snippet_more::{snippet_end, snippet_start};
 
-snippet_start!("pos", library = "Pos");
+snippet_start!(name = "pos", library = "Pos");
 #[proconio::derive_readable]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub struct Pos {
@@ -24,7 +24,7 @@ impl Pos {
 }
 snippet_end!("pos");
 
-snippet_start!("unsafe_pos", library = "UnsafePos");
+snippet_start!(name = "unsafe_pos", library = "UnsafePos");
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct UnsafePos {
     x: isize,
@@ -100,7 +100,7 @@ impl<T> std::ops::IndexMut<Pos> for Grid<T> {
 }
 snippet_end!("grid");
 
-snippet_start!("vec_util", library = "VecUtil");
+snippet_start!(name = "vec_util", library = "VecUtil");
 pub trait VecUtil<T> {
     fn get_or_default(&self, i: usize) -> T;
 }
@@ -112,7 +112,11 @@ impl<T: Default + Copy> VecUtil<T> for Vec<T> {
 }
 snippet_end!("vec_util");
 
-snippet_start!("direction", library = "Direction", include = "unsafe_pos");
+snippet_start!(
+    name = "direction",
+    library = "Direction",
+    include = "unsafe_pos"
+);
 #[derive(PartialEq, Eq, Hash, Clone, Copy, Debug, Default)]
 pub enum Direction {
     #[default]
