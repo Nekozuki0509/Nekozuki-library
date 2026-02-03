@@ -3,15 +3,16 @@
     "prefix": "bfs",
     "body": [
       "    cargo_snippet_more::expanded!(\"bfs\");",
-      "    let mut dist = vec![!0; n];",
+      "    let mut dist = vec![!0; ${1:n}];",
       "    let mut q = std::collections::VecDeque::new();",
       "    q.push_back(0);",
       "    dist[0] = 0;",
       "    while let Some(pos) = q.pop_front() {",
       "        for &i in &g[pos] {",
-      "            if dist[i] == -1 {",
+      "            if dist[i] == !0 {",
       "                dist[i] = dist[pos] + 1;",
       "                q.push_back(i);",
+      "                $0",
       "            }",
       "        }",
       "    }"
@@ -88,7 +89,7 @@
     "prefix": "gcd",
     "body": [
       "    cargo_snippet_more::expanded!(\"gcd\");",
-      "    pub fn gcd(a: u64, b: u64) -> u64 {",
+      "    pub fn gcd(a: usize, b: usize) -> usize {",
       "        if b == 0 {",
       "            a",
       "        } else {",
@@ -101,7 +102,7 @@
     "prefix": "gcd_list",
     "body": [
       "    cargo_snippet_more::expanded!(\"gcd\");",
-      "    pub fn gcd(a: u64, b: u64) -> u64 {",
+      "    pub fn gcd(a: usize, b: usize) -> usize {",
       "        if b == 0 {",
       "            a",
       "        } else {",
@@ -109,7 +110,7 @@
       "        }",
       "    }",
       "    cargo_snippet_more::expanded!(\"gcd_list\");",
-      "    pub fn gcd_list(list: &[u64]) -> u64 {",
+      "    pub fn gcd_list(list: &[usize]) -> usize {",
       "        list.iter().fold(list[0], |a, &b| gcd(a, b))",
       "    }"
     ]
@@ -189,8 +190,8 @@
     "prefix": "lcm",
     "body": [
       "    cargo_snippet_more::expanded!(\"lcm\");",
-      "    pub fn lcm(a: u64, b: u64) -> u64 {",
-      "        a / gcd(a, b) * b",
+      "    pub fn lcm(a: usize, b: usize) -> usize {",
+      "        ${1:a} / gcd(a, b) * b",
       "    }"
     ]
   },
@@ -198,15 +199,15 @@
     "prefix": "math",
     "body": [
       "    cargo_snippet_more::expanded!(\"math\");",
-      "    pub fn gcd(a: u64, b: u64) -> u64 {",
+      "    pub fn gcd(a: usize, b: usize) -> usize {",
       "        if b == 0 {",
       "            a",
       "        } else {",
       "            gcd(b, a % b)",
       "        }",
       "    }",
-      "    pub fn lcm(a: u64, b: u64) -> u64 {",
-      "        a / gcd(a, b) * b",
+      "    pub fn lcm(a: usize, b: usize) -> usize {",
+      "        ${1:a} / gcd(a, b) * b",
       "    }"
     ]
   },
@@ -232,6 +233,20 @@
       "                None",
       "            }",
       "        }",
+      "    }"
+    ]
+  },
+  "to_base": {
+    "prefix": "to_base",
+    "body": [
+      "    cargo_snippet_more::expanded!(\"to_base\");",
+      "    pub fn to_base(mut n: usize, b: usize) -> usize {",
+      "        let mut v = String::new();",
+      "        while n != 0 {",
+      "            v.push_str(&(n % b).to_string());",
+      "            n /= b;",
+      "        }",
+      "        v.chars().rev().collect::<String>().parse().unwrap()",
       "    }"
     ]
   },
