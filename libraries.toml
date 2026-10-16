@@ -1,31 +1,41 @@
-[library.childs.ahc.childs]
+[library.childs.collection.childs]
 
-[library.childs.ahc.files.Direction]
+[library.childs.collection.files.Direction]
 name = "direction"
 dependencies = ["unsafe_pos"]
 content = ' # [derive (PartialEq , Eq , Hash , Clone , Copy , Debug , Default ) ] pub enum Direction {# [default ] U , D , L , R , S , } impl std :: fmt :: Display for Direction {fn fmt (& self , f : & mut std :: fmt :: Formatter ) -> std :: fmt :: Result {let v = match self {Self :: U => "U" , Self :: D => "D" , Self :: L => "L" , Self :: R => "R" , Self :: S => "S" , } ; write ! (f , "{}" , v ) ? ; Ok (() ) } } impl Direction {pub fn to_unsafe_pos (& self ) -> UnsafePos {match self {Self :: U => UnsafePos :: new (- 1 , 0 ) , Self :: D => UnsafePos :: new (1 , 0 ) , Self :: L => UnsafePos :: new (0 , - 1 ) , Self :: R => UnsafePos :: new (0 , 1 ) , Self :: S => UnsafePos :: new (0 , 0 ) , } } }  '
 
-[library.childs.ahc.files.Grid]
+[library.childs.collection.files.Grid]
 name = "grid"
 dependencies = ["pos"]
-content = " pub struct Grid < T > {g : Vec < Vec < T > > , } impl < T : Clone > Grid < T > {pub fn new (n : usize ) -> Self {Self {g : vec ! [vec ! [] ; n ] } } pub fn new_with_default (n : usize , d : T ) -> Self {Self {g : vec ! [vec ! [d ; n ] ; n ] , } } pub fn iter (& self ) -> impl Iterator < Item = & Vec < T > > {self . g . iter () } pub fn pos_iter (& self ) -> impl Iterator < Item = (Pos , & T ) > {self . iter () . enumerate () . flat_map (| (i , row ) | {row . iter () . enumerate () . map (move | (j , v ) | (Pos :: new (i , j ) , v ) ) } ) } } impl < T > std :: ops :: Index < usize > for Grid < T > {type Output = Vec < T > ; fn index (& self , index : usize ) -> & Self :: Output {& self . g [index ] } } impl < T > std :: ops :: IndexMut < usize > for Grid < T > {fn index_mut (& mut self , index : usize ) -> & mut Self :: Output {& mut self . g [index ] } } impl < T > std :: ops :: Index < Pos > for Grid < T > {type Output = T ; fn index (& self , index : Pos ) -> & Self :: Output {& self [index . x ] [index . y ] } } impl < T > std :: ops :: IndexMut < Pos > for Grid < T > {fn index_mut (& mut self , index : Pos ) -> & mut Self :: Output {& mut self [index . x ] [index . y ] } }  "
+content = " pub struct Grid < T > {g : Vec < Vec < T > > , } impl < T > Grid < T > {pub fn pos_iter (& self ) -> impl Iterator < Item = (Pos , & T ) > {self . g . iter () . enumerate () . flat_map (| (i , row ) | {row . iter () . enumerate () . map (move | (j , v ) | (Pos :: new (i , j ) , v ) ) } ) } pub fn iter (& self ) -> std :: iter :: Flatten < std :: slice :: Iter < '_ , Vec < T > > > {self . g . iter () . flatten () } pub fn iter_mut (& mut self ) -> impl Iterator < Item = & mut T > {self . g . iter_mut () . flat_map (| r | r . iter_mut () ) } } impl < T : Clone > Grid < T > {pub fn new (n : usize , m : usize , d : T ) -> Self {Self {g : vec ! [vec ! [d ; m ] ; n ] , } } pub fn rotate_right (& self ) -> Self {let mut g = Grid :: new (self [0 ] . len () , self . g . len () , self [0 ] [0 ] . clone () ) ; for (p , v ) in self . pos_iter () {let y = g [0 ] . len () - p . x - 1 ; g [p . y ] [y ] = v . clone () ; } g } pub fn rotate_left (& self ) -> Self {let mut g = Grid :: new (self . g [0 ] . len () , self . g . len () , self [0 ] [0 ] . clone () ) ; for (p , v ) in self . pos_iter () {let x = g . g . len () - p . y - 1 ; g [x ] [p . x ] = v . clone () ; } g } } impl < T > From < Vec < Vec < T > > > for Grid < T > {fn from (g : Vec < Vec < T > > ) -> Self {Self {g } } } impl < T > std :: ops :: Index < usize > for Grid < T > {type Output = Vec < T > ; fn index (& self , index : usize ) -> & Self :: Output {& self . g [index ] } } impl < T > std :: ops :: IndexMut < usize > for Grid < T > {fn index_mut (& mut self , index : usize ) -> & mut Self :: Output {& mut self . g [index ] } } impl < T > std :: ops :: Index < Pos > for Grid < T > {type Output = T ; fn index (& self , index : Pos ) -> & Self :: Output {& self [index . x ] [index . y ] } } impl < T > std :: ops :: IndexMut < Pos > for Grid < T > {fn index_mut (& mut self , index : Pos ) -> & mut Self :: Output {& mut self [index . x ] [index . y ] } } impl < T > IntoIterator for Grid < T > {type Item = T ; type IntoIter = std :: iter :: Flatten < std :: vec :: IntoIter < Vec < T > > > ; fn into_iter (self ) -> Self :: IntoIter {self . g . into_iter () . flatten () } } impl < 'a , T > IntoIterator for & 'a Grid < T > {type Item = & 'a T ; type IntoIter = std :: iter :: Flatten < std :: slice :: Iter < 'a , Vec < T > > > ; fn into_iter (self ) -> Self :: IntoIter {self . iter () } }   pub struct IGrid < T > (Pos , std :: marker :: PhantomData < T > ) ; impl < T : proconio :: source :: Readable < Output = T > + Default + Clone > proconio :: source :: RuntimeReadable for IGrid < T > {type Output = Grid < T > ; fn read < R : std :: io :: BufRead , S : proconio :: source :: Source < R > > (self , source : & mut S , ) -> Self :: Output {let IGrid :: < T > (p , _ ) = self ; let mut g = Grid :: new (p . x , p . y , T :: default () ) ; for p in p {g [p ] = < T as proconio :: source :: Readable > :: read (source ) ; } g } }  "
 
-[library.childs.ahc.files.Pos]
+[library.childs.collection.files.Pos]
 name = "pos"
-dependencies = []
-content = " # [proconio :: derive_readable ] # [derive (Debug , Clone , Copy , PartialEq , Eq , Hash , Default ) ] pub struct Pos {x : usize , y : usize , } impl Pos {pub fn new (x : usize , y : usize ) -> Self {Self {x , y } } pub fn new_if_is_valid (& self , d : UnsafePos , n : usize ) -> Option < Self > {let next = UnsafePos :: new (self . x as isize + d . x , self . y as isize + d . y ) ; if next . is_valid (n as isize ) {Some (Self :: new (next . x as usize , next . y as usize ) ) } else {None } } }  "
+dependencies = ["unsafe_pos"]
+content = " # [proconio :: derive_readable ] # [derive (Debug , Clone , Copy , PartialEq , Eq , Hash , Default , PartialOrd , Ord ) ] pub struct Pos {pub x : usize , pub y : usize , } impl Pos {pub fn new (x : usize , y : usize ) -> Self {Self {x , y } } pub fn to_unsafe (& self ) -> UnsafePos {UnsafePos :: new (self . x as isize , self . y as isize ) } pub fn new_if_is_valid (& self , d : UnsafePos , n : usize , m : usize ) -> Option < Self > {let next = self . addu (d ) ; if next . is_valid (n as isize , m as isize ) {Some (next . as_pos () ) } else {None } } pub fn addu (& self , rhs : UnsafePos ) -> UnsafePos {self . to_unsafe () + rhs } pub fn subu (& self , rhs : UnsafePos ) -> UnsafePos {self . to_unsafe () - rhs } pub fn add (& self , rhs : (usize , usize ) ) -> Pos {* self + Pos :: from (rhs ) } pub fn sub (& self , rhs : (usize , usize ) ) -> UnsafePos {self . to_unsafe () . sub (rhs ) } pub fn addi (& self , rhs : (isize , isize ) ) -> UnsafePos {self . to_unsafe () . addi (rhs ) } pub fn subi (& self , rhs : (isize , isize ) ) -> UnsafePos {self . to_unsafe () . subi (rhs ) } pub fn incx (& self ) -> Pos {self . to_unsafe () . incx () . as_pos () } pub fn decx (& self ) -> UnsafePos {self . to_unsafe () . decx () } pub fn incy (& self ) -> Pos {self . to_unsafe () . incy () . as_pos () } pub fn decy (& self ) -> UnsafePos {self . to_unsafe () . decy () } pub fn squr_dist (& self , other : & Pos ) -> usize {self . to_unsafe () . squr_dist (& other . to_unsafe () ) } pub fn dist (& self , other : & Pos ) -> usize {num_integer :: sqrt (self . squr_dist (other ) ) } pub fn fdist (& self , other : & Pos ) -> f64 {self . to_unsafe () . fdist (& other . to_unsafe () ) } pub fn iter (& self ) -> IPos {IPos :: new (Pos :: default () , * self ) } pub fn range (& self , end : Pos ) -> IPos {if let Some (end ) = end . new_if_is_valid (UnsafePos :: new (- 1 , - 1 ) , end . x , end . y ) {IPos :: new (* self , end ) } else {IPos :: default () } } pub fn range_eq (& self , end : Pos ) -> IPos {IPos :: new (* self , end ) } } impl From < (usize , usize ) > for Pos {fn from (value : (usize , usize ) ) -> Self {UnsafePos :: from (value ) . as_pos () } } impl From < (isize , isize ) > for Pos {fn from (value : (isize , isize ) ) -> Self {UnsafePos :: from (value ) . as_pos () } } impl std :: ops :: Add for Pos {type Output = Pos ; fn add (self , rhs : Self ) -> Self :: Output {Self :: new (self . x + rhs . x , self . y + rhs . y ) } } impl std :: ops :: Sub for Pos {type Output = UnsafePos ; fn sub (self , rhs : Self ) -> Self :: Output {self . subu (rhs . to_unsafe () ) } } impl IntoIterator for Pos {type Item = Pos ; type IntoIter = IPos ; fn into_iter (self ) -> Self :: IntoIter {self . iter () } } # [derive (Default ) ] pub struct IPos {iter : IUnsafePos , } impl IPos {fn new (start : Pos , end : Pos ) -> IPos {IPos {iter : IUnsafePos :: new (start . to_unsafe () , end . to_unsafe () ) , } } } impl Iterator for IPos {type Item = Pos ; fn next (& mut self ) -> Option < Self :: Item > {self . iter . next () . map (| p | p . as_pos () ) } }  "
 
-[library.childs.ahc.files.UnsafePos]
+[library.childs.collection.files.UnsafePos]
 name = "unsafe_pos"
-dependencies = []
-content = " # [derive (Debug , Clone , Copy , PartialEq ) ] pub struct UnsafePos {x : isize , y : isize , } impl UnsafePos {pub const fn new (x : isize , y : isize ) -> Self {Self {x , y } } pub fn is_valid (& self , n : isize ) -> bool {0 <= self . x && self . x < n && 0 <= self . y && self . y < n } }  "
+dependencies = ["pos"]
+content = " # [proconio :: derive_readable ] # [derive (Debug , Clone , Copy , PartialEq , Eq , Default ) ] pub struct UnsafePos {x : isize , y : isize , } impl UnsafePos {pub const fn new (x : isize , y : isize ) -> Self {Self {x , y } } pub fn as_pos (& self ) -> Pos {Pos :: new (self . x as usize , self . y as usize ) } pub fn is_valid (& self , n : isize , m : isize ) -> bool {0 <= self . x && self . x < n && 0 <= self . y && self . y < m } pub fn add (& self , rhs : (usize , usize ) ) -> Self {* self + Self :: from (rhs ) } pub fn sub (& self , rhs : (usize , usize ) ) -> Self {* self - Self :: from (rhs ) } pub fn addi (& self , rhs : (isize , isize ) ) -> Self {* self + Self :: from (rhs ) } pub fn subi (& self , rhs : (isize , isize ) ) -> Self {* self - Self :: from (rhs ) } pub fn incx (& self ) -> Self {self . add ((1 , 0 ) ) } pub fn decx (& self ) -> Self {self . sub ((1 , 0 ) ) } pub fn incy (& self ) -> Self {self . add ((0 , 1 ) ) } pub fn decy (& self ) -> Self {self . sub ((0 , 1 ) ) } pub fn squr_dist (& self , other : & UnsafePos ) -> usize {((self . x - other . x ) . pow (2 ) + (self . y - other . y ) . pow (2 ) ) as usize } pub fn dist (& self , other : & UnsafePos ) -> usize {num_integer :: sqrt (self . squr_dist (other ) ) } pub fn fdist (& self , other : & UnsafePos ) -> f64 {num :: Float :: sqrt ((self . x as f64 - other . x as f64 ) . powf (2. ) + (self . y as f64 - other . y as f64 ) . powf (2. ) , ) } pub fn iter (& self ) -> IUnsafePos {IUnsafePos :: new (UnsafePos :: default () , * self ) } pub fn range (& self , end : Self ) -> IUnsafePos {IUnsafePos :: new (* self , end . decx () . decy () ) } pub fn range_eq (& self , end : Self ) -> IUnsafePos {IUnsafePos :: new (* self , end ) } } impl From < (usize , usize ) > for UnsafePos {fn from (value : (usize , usize ) ) -> Self {UnsafePos :: new (value . 0 as isize , value . 1 as isize ) } } impl From < (isize , isize ) > for UnsafePos {fn from (value : (isize , isize ) ) -> Self {UnsafePos :: new (value . 0 , value . 1 ) } } impl std :: ops :: Add for UnsafePos {type Output = UnsafePos ; fn add (self , rhs : Self ) -> Self :: Output {Self :: new (self . x + rhs . x , self . y + rhs . y ) } } impl std :: ops :: Sub for UnsafePos {type Output = UnsafePos ; fn sub (self , rhs : Self ) -> Self :: Output {Self :: new (self . x - rhs . y , self . x - rhs . y ) } } # [derive (Default ) ] pub struct IUnsafePos {start : UnsafePos , end : UnsafePos , cur : UnsafePos , } impl IUnsafePos {fn new (start : UnsafePos , end : UnsafePos ) -> Self {Self {start , end , cur : start , } } } impl Iterator for IUnsafePos {type Item = UnsafePos ; fn next (& mut self ) -> Option < Self :: Item > {let t = self . cur . incy () ; if t . y <= self . end . y {self . cur = t ; return Some (self . cur ) ; } let t = UnsafePos :: new (self . cur . x + 1 , self . start . y ) ; if t . x <= self . end . x {self . cur = t ; return Some (self . cur ) ; } None } }  "
 
-[library.childs.ahc.files.VecUtil]
+[library.childs.collection.files.VecUtil]
 name = "vec_util"
 dependencies = []
 content = " pub trait VecUtil < T > {fn get_or_default (& self , i : usize ) -> T ; } impl < T : Default + Copy > VecUtil < T > for Vec < T > {fn get_or_default (self : & Vec < T > , i : usize ) -> T {self . get (i ) . copied () . unwrap_or_default () } }  "
 
 [library.childs.common.childs]
+
+[library.childs.common.files.CastExt]
+name = "cast_ext"
+dependencies = []
+content = " pub trait CastExt {fn i (self ) -> isize ; fn u (self ) -> usize ; } macro_rules ! impl_numeric_cast {($ ($ t : ty ) ,* ) => {$ (impl CastExt for $ t {# [inline ] fn i (self ) -> isize {self as isize } # [inline ] fn u (self ) -> usize {self as usize } } ) * } ; } impl_numeric_cast ! (i8 , i16 , i32 , i64 , isize , u8 , u16 , u32 , u64 , usize , f32 , f64 ) ; impl CastExt for char {# [inline ] fn i (self ) -> isize {self . to_digit (10 ) . unwrap () . i () } # [inline ] fn u (self ) -> usize {self . to_digit (10 ) . unwrap () . u () } }  "
+
+[library.childs.common.files.count]
+name = "count"
+dependencies = []
+content = "pub fn count < T : Ord + Copy > (v : & [T ] ) -> std :: collections :: BTreeMap < T , usize > {let mut map = std :: collections :: BTreeMap :: new () ; for i in v . iter () . copied () {* map . entry (i ) . or_insert (0 ) += 1 ; } map } "
 
 [library.childs.common.files.gcd]
 name = "gcd"
@@ -41,6 +51,11 @@ content = "pub fn gcd_list (list : & [usize ] ) -> usize {list . iter () . fold 
 name = "lcm"
 dependencies = []
 content = "pub fn lcm (a : usize , b : usize ) -> usize {p ! (1 , a ) / gcd (a , b ) * b } "
+
+[library.childs.common.files.sum_vec]
+name = "sum_vec"
+dependencies = []
+content = "pub fn sum_vec < T : std :: ops :: Add < Output = T > + Copy > (v : & [T ] ) -> Vec < T > {let mut n = vec ! [v [0 ] ] ; for (i , e ) in v . iter () . skip (1 ) . copied () . enumerate () {n . push (n [i ] + e ) ; } n } "
 
 [library.childs.common.files.to_base]
 name = "to_base"
@@ -59,7 +74,48 @@ name = "dfs"
 dependencies = []
 content = "pub fn dfs (pos : usize , g : & Vec < Vec < usize > > , visited : & mut Vec < bool > ) {visited [pos ] = true ; for & i in & g [pos ] {if ! visited [i ] {dfs (i , g , visited ) ; } } } "
 
+[library.childs.marker.childs]
+
+[library.childs.marker.files.IHeap]
+name = "iheap"
+dependencies = []
+content = " pub struct IHeap < T > (usize , std :: marker :: PhantomData < T > ) ; impl < T : proconio :: source :: Readable < Output = T > + Ord > proconio :: source :: RuntimeReadable for IHeap < T > {type Output = std :: collections :: BinaryHeap < T > ; fn read < R : std :: io :: BufRead , S : proconio :: source :: Source < R > > (self , source : & mut S , ) -> Self :: Output {let IHeap :: < T > (n , _ ) = self ; let mut h = std :: collections :: BinaryHeap :: new () ; for _ in 0 .. n {h . push (< T as proconio :: source :: Readable > :: read (source ) ) ; } h } }  "
+
+[library.childs.marker.files.IMap]
+name = "imap"
+dependencies = []
+content = " pub struct IMap < K , V > (usize , std :: marker :: PhantomData < K > , std :: marker :: PhantomData < V > , ) ; impl < K : proconio :: source :: Readable < Output = K > + Ord , V : proconio :: source :: Readable < Output = V > > proconio :: source :: RuntimeReadable for IMap < K , V > {type Output = std :: collections :: BTreeMap < K , V > ; fn read < R : std :: io :: BufRead , S : proconio :: source :: Source < R > > (self , source : & mut S , ) -> Self :: Output {let IMap :: < K , V > (n , _ , _ ) = self ; let mut m = std :: collections :: BTreeMap :: new () ; for _ in 0 .. n {m . insert (< K as proconio :: source :: Readable > :: read (source ) , < V as proconio :: source :: Readable > :: read (source ) , ) ; } m } }  "
+
+[library.childs.marker.files.IQue]
+name = "ique"
+dependencies = []
+content = " pub struct IQue < T > (usize , std :: marker :: PhantomData < T > ) ; impl < T : proconio :: source :: Readable < Output = T > > proconio :: source :: RuntimeReadable for IQue < T > {type Output = std :: collections :: VecDeque < T > ; fn read < R : std :: io :: BufRead , S : proconio :: source :: Source < R > > (self , source : & mut S , ) -> Self :: Output {let IQue :: < T > (n , _ ) = self ; let mut q = std :: collections :: VecDeque :: new () ; for _ in 0 .. n {q . push_back (< T as proconio :: source :: Readable > :: read (source ) ) ; } q } }  "
+
+[library.childs.marker.files.ISet]
+name = "iset"
+dependencies = []
+content = " pub struct ISet < T > (usize , std :: marker :: PhantomData < T > ) ; impl < T : proconio :: source :: Readable < Output = T > + Ord > proconio :: source :: RuntimeReadable for ISet < T > {type Output = std :: collections :: BTreeSet < T > ; fn read < R : std :: io :: BufRead , S : proconio :: source :: Source < R > > (self , source : & mut S , ) -> Self :: Output {let ISet :: < T > (n , _ ) = self ; let mut s = std :: collections :: BTreeSet :: new () ; for _ in 0 .. n {s . insert (< T as proconio :: source :: Readable > :: read (source ) ) ; } s } }  "
+
+[library.childs.moreiter.childs]
+
+[library.childs.moreiter.files.MoreIter]
+name = "more_iter"
+dependencies = []
+content = ' pub trait MoreIter : Iterator {fn sum (self ) -> Self :: Item where Self : Sized , Self :: Item : std :: iter :: Sum , {Iterator :: sum (self ) } fn join_space (mut self ) -> String where Self : Sized , Self :: Item : std :: fmt :: Display , {itertools :: Itertools :: join (& mut self , " " ) } fn join_line (mut self ) -> String where Self : Sized , Self :: Item : std :: fmt :: Display , {itertools :: Itertools :: join (& mut self , "\n" ) } fn print_space (self ) where Self : Sized , Self :: Item : std :: fmt :: Display , {println ! ("{}" , self . join_space () ) ; } fn print_line (self ) where Self : Sized , Self :: Item : std :: fmt :: Display , {println ! ("{}" , self . join_line () ) ; } fn left_sorted < T : Ord , U > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , U ) > , {itertools :: Itertools :: sorted_by (self , | i , j | i . 0 . cmp (& j . 0 ) ) } fn right_sorted < T , U : Ord > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , U ) > , {itertools :: Itertools :: sorted_by (self , | i , j | i . 1 . cmp (& j . 1 ) ) } } impl < I : Iterator + ? Sized > MoreIter for I {}  '
+
 [library.files]
+
+[[pathes.cast_ext]]
+Path = "common"
+
+[[pathes.cast_ext]]
+Name = "CastExt"
+
+[[pathes.count]]
+Path = "common"
+
+[[pathes.count]]
+Name = "count"
 
 [[pathes.dfs]]
 Path = "graph"
@@ -68,7 +124,7 @@ Path = "graph"
 Name = "dfs"
 
 [[pathes.direction]]
-Path = "ahc"
+Path = "collection"
 
 [[pathes.direction]]
 Name = "Direction"
@@ -86,10 +142,34 @@ Path = "common"
 Name = "gcd_list"
 
 [[pathes.grid]]
-Path = "ahc"
+Path = "collection"
 
 [[pathes.grid]]
 Name = "Grid"
+
+[[pathes.iheap]]
+Path = "marker"
+
+[[pathes.iheap]]
+Name = "IHeap"
+
+[[pathes.imap]]
+Path = "marker"
+
+[[pathes.imap]]
+Name = "IMap"
+
+[[pathes.ique]]
+Path = "marker"
+
+[[pathes.ique]]
+Name = "IQue"
+
+[[pathes.iset]]
+Path = "marker"
+
+[[pathes.iset]]
+Name = "ISet"
 
 [[pathes.lcm]]
 Path = "common"
@@ -97,11 +177,23 @@ Path = "common"
 [[pathes.lcm]]
 Name = "lcm"
 
+[[pathes.more_iter]]
+Path = "moreiter"
+
+[[pathes.more_iter]]
+Name = "MoreIter"
+
 [[pathes.pos]]
-Path = "ahc"
+Path = "collection"
 
 [[pathes.pos]]
 Name = "Pos"
+
+[[pathes.sum_vec]]
+Path = "common"
+
+[[pathes.sum_vec]]
+Name = "sum_vec"
 
 [[pathes.to_base]]
 Path = "common"
@@ -116,13 +208,13 @@ Path = "graph"
 Name = "UnionFind"
 
 [[pathes.unsafe_pos]]
-Path = "ahc"
+Path = "collection"
 
 [[pathes.unsafe_pos]]
 Name = "UnsafePos"
 
 [[pathes.vec_util]]
-Path = "ahc"
+Path = "collection"
 
 [[pathes.vec_util]]
 Name = "VecUtil"
