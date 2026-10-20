@@ -464,12 +464,14 @@ snippet_end!("direction");
 #[macro_export]
 macro_rules! set {
     ($($x:expr),* $(,)?) => {
-        let mut set = ::std::collections::BTreeSet::new();
-        $(
-            set.insert($x);
-        )*
+        {
+            let mut set = ::std::collections::BTreeSet::new();
+            $(
+                set.insert($x);
+            )*
 
-        set
+            set
+        }
     };
 }
 
@@ -477,12 +479,14 @@ macro_rules! set {
 #[macro_export]
 macro_rules! map {
     ($($key:expr=>$val:expr),* $(,)?) => {
-        let mut map = ::std::collections::BTreeMap::new();
-        $(
-            map.insert($key, $val);
-        )*
+        {
+            let mut map = ::std::collections::BTreeMap::new();
+            $(
+                map.insert($key, $val);
+            )*
 
-        map
+            map
+        }
     };
 }
 
@@ -490,12 +494,14 @@ macro_rules! map {
 #[macro_export]
 macro_rules! que {
     ($($x:expr),* $(,)?) => {
-        let mut que = ::std::collections::VecDeque::new();
-        $(
-            que.push_back($x);
-        )*
+        {
+            let mut que = ::std::collections::VecDeque::new();
+            $(
+                que.push_back($x);
+            )*
 
-        que
+            que
+        }
     };
 }
 
@@ -503,11 +509,13 @@ macro_rules! que {
 #[macro_export]
 macro_rules! heap {
     ($($x:expr),* $(,)?) => {
-        let mut heap = ::std::collections::BinaryHeap::new();
-        $(
-            heap.push($x);
-        )*
+        {
+            let mut heap = ::std::collections::BinaryHeap::new();
+            $(
+                heap.push($x);
+            )*
 
-        heap
+            heap
+        }
     };
 }

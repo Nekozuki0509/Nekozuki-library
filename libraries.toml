@@ -103,7 +103,35 @@ name = "more_iter"
 dependencies = []
 content = ' pub trait MoreIter : Iterator {fn sum (self ) -> Self :: Item where Self : Sized , Self :: Item : std :: iter :: Sum , {Iterator :: sum (self ) } fn join_space (mut self ) -> String where Self : Sized , Self :: Item : std :: fmt :: Display , {itertools :: Itertools :: join (& mut self , " " ) } fn join_line (mut self ) -> String where Self : Sized , Self :: Item : std :: fmt :: Display , {itertools :: Itertools :: join (& mut self , "\n" ) } fn print_space (self ) where Self : Sized , Self :: Item : std :: fmt :: Display , {println ! ("{}" , self . join_space () ) ; } fn print_line (self ) where Self : Sized , Self :: Item : std :: fmt :: Display , {println ! ("{}" , self . join_line () ) ; } fn left_sorted < T : Ord , U > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , U ) > , {itertools :: Itertools :: sorted_by (self , | i , j | i . 0 . cmp (& j . 0 ) ) } fn right_sorted < T , U : Ord > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , U ) > , {itertools :: Itertools :: sorted_by (self , | i , j | i . 1 . cmp (& j . 1 ) ) } } impl < I : Iterator + ? Sized > MoreIter for I {}  '
 
-[library.files]
+[library.files.heap]
+name = "heap"
+dependencies = []
+content = "# [macro_export ] macro_rules ! heap {($ ($ x : expr ) ,* $ (, ) ? ) => {{let mut heap = :: std :: collections :: BinaryHeap :: new () ; $ (heap . push ($ x ) ; ) * heap } } ; } "
+
+[library.files.map]
+name = "map"
+dependencies = []
+content = "# [macro_export ] macro_rules ! map {($ ($ key : expr =>$ val : expr ) ,* $ (, ) ? ) => {{let mut map = :: std :: collections :: BTreeMap :: new () ; $ (map . insert ($ key , $ val ) ; ) * map } } ; } "
+
+[library.files.que]
+name = "que"
+dependencies = []
+content = "# [macro_export ] macro_rules ! que {($ ($ x : expr ) ,* $ (, ) ? ) => {{let mut que = :: std :: collections :: VecDeque :: new () ; $ (que . push_back ($ x ) ; ) * que } } ; } "
+
+[library.files.set]
+name = "set"
+dependencies = []
+content = "# [macro_export ] macro_rules ! set {($ ($ x : expr ) ,* $ (, ) ? ) => {{let mut set = :: std :: collections :: BTreeSet :: new () ; $ (set . insert ($ x ) ; ) * set } } ; } "
+
+[library.files.update_max]
+name = "update_max"
+dependencies = []
+content = "# [macro_export ] macro_rules ! update_max {($ a : expr ) => {$ a } ; ($ a : expr , $ b : expr $ (, $ rest : expr ) * ) => {{$ a = $ a . max ($ b ) ; update_max ! ($ a $ (, $ rest ) * ) } } } "
+
+[library.files.update_min]
+name = "update_min"
+dependencies = []
+content = "# [macro_export ] macro_rules ! update_min {($ a : expr ) => {$ a } ; ($ a : expr , $ b : expr $ (, $ rest : expr ) * ) => {{$ a = $ a . min ($ b ) ; update_min ! ($ a $ (, $ rest ) * ) } } } "
 
 [[pathes.cast_ext]]
 Path = "common"
@@ -147,6 +175,9 @@ Path = "collection"
 [[pathes.grid]]
 Name = "Grid"
 
+[[pathes.heap]]
+Name = "heap"
+
 [[pathes.iheap]]
 Path = "marker"
 
@@ -177,6 +208,9 @@ Path = "common"
 [[pathes.lcm]]
 Name = "lcm"
 
+[[pathes.map]]
+Name = "map"
+
 [[pathes.more_iter]]
 Path = "moreiter"
 
@@ -188,6 +222,12 @@ Path = "collection"
 
 [[pathes.pos]]
 Name = "Pos"
+
+[[pathes.que]]
+Name = "que"
+
+[[pathes.set]]
+Name = "set"
 
 [[pathes.sum_vec]]
 Path = "common"
@@ -212,6 +252,12 @@ Path = "collection"
 
 [[pathes.unsafe_pos]]
 Name = "UnsafePos"
+
+[[pathes.update_max]]
+Name = "update_max"
+
+[[pathes.update_min]]
+Name = "update_min"
 
 [[pathes.vec_util]]
 Path = "collection"
