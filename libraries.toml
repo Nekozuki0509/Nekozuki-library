@@ -101,7 +101,7 @@ content = " pub struct ISet < T > (usize , std :: marker :: PhantomData < T > ) 
 [library.childs.moreiter.files.MoreIter]
 name = "more_iter"
 dependencies = []
-content = ' pub trait MoreIter : Iterator {fn sum (self ) -> Self :: Item where Self : Sized , Self :: Item : std :: iter :: Sum , {Iterator :: sum (self ) } fn join_space (mut self ) -> String where Self : Sized , Self :: Item : std :: fmt :: Display , {itertools :: Itertools :: join (& mut self , " " ) } fn join_line (mut self ) -> String where Self : Sized , Self :: Item : std :: fmt :: Display , {itertools :: Itertools :: join (& mut self , "\n" ) } fn print_space (self ) where Self : Sized , Self :: Item : std :: fmt :: Display , {println ! ("{}" , self . join_space () ) ; } fn print_line (self ) where Self : Sized , Self :: Item : std :: fmt :: Display , {println ! ("{}" , self . join_line () ) ; } fn left_sorted < T : Ord , U > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , U ) > , {itertools :: Itertools :: sorted_by (self , | i , j | i . 0 . cmp (& j . 0 ) ) } fn right_sorted < T , U : Ord > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , U ) > , {itertools :: Itertools :: sorted_by (self , | i , j | i . 1 . cmp (& j . 1 ) ) } } impl < I : Iterator + ? Sized > MoreIter for I {}  '
+content = ' pub trait MoreIter : Iterator {fn sum (self ) -> Self :: Item where Self : Sized , Self :: Item : std :: iter :: Sum , {Iterator :: sum (self ) } fn join_space (mut self ) -> String where Self : Sized , Self :: Item : std :: fmt :: Display , {itertools :: Itertools :: join (& mut self , " " ) } fn join_line (mut self ) -> String where Self : Sized , Self :: Item : std :: fmt :: Display , {itertools :: Itertools :: join (& mut self , "\n" ) } fn print_space (self ) where Self : Sized , Self :: Item : std :: fmt :: Display , {println ! ("{}" , self . join_space () ) ; } fn print_line (self ) where Self : Sized , Self :: Item : std :: fmt :: Display , {println ! ("{}" , self . join_line () ) ; } fn left_sorted < T : Ord , U > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , U ) > , {itertools :: Itertools :: sorted_by (self , | i , j | i . 0 . cmp (& j . 0 ) ) } fn right_sorted < T , U : Ord > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , U ) > , {itertools :: Itertools :: sorted_by (self , | i , j | i . 1 . cmp (& j . 1 ) ) } fn left < T , U > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , U ) > , {self . map (| (l , _ ) | l ) } fn right < T , U > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , U ) > , {self . map (| (_ , r ) | r ) } fn rle < T > (self ) -> impl Iterator where Self : Sized + Iterator , Self :: Item : PartialEq , {self . fold (std :: collections :: VecDeque :: new () , | mut acc , x | {if let Some ((l , v ) ) = acc . pop_back () {if l == x {acc . push_back ((l , v + 1 ) ) ; } else {acc . push_back ((l , v ) ) ; acc . push_back ((x , 1 ) ) ; } } else {acc . push_back ((x , 1 ) ) ; } acc } ) . into_iter () } fn filter_v < T : PartialEq > (self , v : & T ) -> impl Iterator where Self : Sized + Iterator < Item = T > , {self . filter (move | x | x == v ) } fn filter_not_v < T : PartialEq > (self , v : & T ) -> impl Iterator where Self : Sized + Iterator < Item = T > , {self . filter (move | x | x != v ) } } impl < I : Iterator + ? Sized > MoreIter for I {}  '
 
 [library.files.heap]
 name = "heap"
@@ -126,12 +126,12 @@ content = "# [macro_export ] macro_rules ! set {($ ($ x : expr ) ,* $ (, ) ? ) =
 [library.files.update_max]
 name = "update_max"
 dependencies = []
-content = "# [macro_export ] macro_rules ! update_max {($ a : expr ) => {$ a } ; ($ a : expr , $ b : expr $ (, $ rest : expr ) * ) => {{$ a = $ a . max ($ b ) ; update_max ! ($ a $ (, $ rest ) * ) } } } "
+content = "# [macro_export ] macro_rules ! update_max {($ a : expr ) => {} ; ($ a : expr , $ b : expr $ (, $ rest : expr ) * ) => {{$ a = $ a . max ($ b ) ; update_max ! ($ a $ (, $ rest ) * ) ; } } } "
 
 [library.files.update_min]
 name = "update_min"
 dependencies = []
-content = "# [macro_export ] macro_rules ! update_min {($ a : expr ) => {$ a } ; ($ a : expr , $ b : expr $ (, $ rest : expr ) * ) => {{$ a = $ a . min ($ b ) ; update_min ! ($ a $ (, $ rest ) * ) } } } "
+content = "# [macro_export ] macro_rules ! update_min {($ a : expr ) => {} ; ($ a : expr , $ b : expr $ (, $ rest : expr ) * ) => {{$ a = $ a . min ($ b ) ; update_min ! ($ a $ (, $ rest ) * ) ; } } } "
 
 [[pathes.cast_ext]]
 Path = "common"
