@@ -86,13 +86,12 @@ snippet_end!("cast_ext");
 #[macro_export]
 macro_rules! update_max {
     ($a:expr) => {
-        $a
     };
 
     ($a:expr, $b: expr $(, $rest:expr)*) => {
         {
             $a = $a.max($b);
-            update_max!($a $(, $rest)*)
+            update_max!($a $(, $rest)*);
         }
     }
 }
@@ -101,13 +100,12 @@ macro_rules! update_max {
 #[macro_export]
 macro_rules! update_min {
     ($a:expr) => {
-        $a
     };
 
     ($a:expr, $b: expr $(, $rest:expr)*) => {
         {
             $a = $a.min($b);
-            update_min!($a $(, $rest)*)
+            update_min!($a $(, $rest)*);
         }
     }
 }

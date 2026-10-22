@@ -55,6 +55,56 @@ pub trait MoreIter: Iterator {
     {
         itertools::Itertools::sorted_by(self, |i, j| i.1.cmp(&j.1))
     }
+
+    fn left<T, U>(self) -> impl Iterator
+    where
+        Self: Sized + Iterator<Item = (T, U)>,
+    {
+        self.map(|(l, _)| l)
+    }
+
+    fn right<T, U>(self) -> impl Iterator
+    where
+        Self: Sized + Iterator<Item = (T, U)>,
+    {
+        self.map(|(_, r)| r)
+    }
+
+    fn rle<T>(self) -> impl Iterator
+    where
+        Self: Sized + Iterator,
+        Self::Item: PartialEq,
+    {
+        self.fold(std::collections::VecDeque::new(), |mut acc, x| {
+            if let Some((l, v)) = acc.pop_back() {
+                if l == x {
+                    acc.push_back((l, v + 1));
+                } else {
+                    acc.push_back((l, v));
+                    acc.push_back((x, 1));
+                }
+            } else {
+                acc.push_back((x, 1));
+            }
+
+            acc
+        })
+        .into_iter()
+    }
+
+    fn filter_v<T: PartialEq>(self, v: &T) -> impl Iterator
+    where
+        Self: Sized + Iterator<Item = T>,
+    {
+        self.filter(move |x| x == v)
+    }
+
+    fn filter_not_v<T: PartialEq>(self, v: &T) -> impl Iterator
+    where
+        Self: Sized + Iterator<Item = T>,
+    {
+        self.filter(move |x| x != v)
+    }
 }
 
 impl<I: Iterator + ?Sized> MoreIter for I {}
