@@ -2,6 +2,13 @@ use cargo_snippet_more::{snippet_end, snippet_start};
 
 snippet_start!(name = "more_iter", library = "MoreIter");
 pub trait MoreIter: Iterator {
+    fn to_digit(self) -> impl Iterator<Item = usize>
+    where
+        Self: Sized + Iterator<Item = char>,
+    {
+        self.map(|c| c.to_digit(10).unwrap() as usize)
+    }
+
     fn sum(self) -> Self::Item
     where
         Self: Sized,
@@ -70,9 +77,9 @@ pub trait MoreIter: Iterator {
         self.map(|(_, r)| r)
     }
 
-    fn rle<T>(self) -> impl Iterator
+    fn rle(self) -> impl Iterator
     where
-        Self: Sized + Iterator,
+        Self: Sized,
         Self::Item: PartialEq,
     {
         self.fold(std::collections::VecDeque::new(), |mut acc, x| {
