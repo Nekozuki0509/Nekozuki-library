@@ -465,6 +465,7 @@ snippet_end!("direction");
 macro_rules! set {
     ($($x:expr),* $(,)?) => {
         {
+            #[allow(unused_mut)]
             let mut set = ::std::collections::BTreeSet::new();
             $(
                 set.insert($x);
@@ -480,6 +481,7 @@ macro_rules! set {
 macro_rules! map {
     ($($key:expr=>$val:expr),* $(,)?) => {
         {
+            #[allow(unused_mut)]
             let mut map = ::std::collections::BTreeMap::new();
             $(
                 map.insert($key, $val);
@@ -495,6 +497,7 @@ macro_rules! map {
 macro_rules! que {
     ($($x:expr),* $(,)?) => {
         {
+            #[allow(unused_mut)]
             let mut que = ::std::collections::VecDeque::new();
             $(
                 que.push_back($x);
@@ -510,6 +513,7 @@ macro_rules! que {
 macro_rules! heap {
     ($($x:expr),* $(,)?) => {
         {
+            #[allow(unused_mut)]
             let mut heap = ::std::collections::BinaryHeap::new();
             $(
                 heap.push($x);

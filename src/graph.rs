@@ -1,4 +1,4 @@
-use cargo_snippet_more::{snippet, snippet_end, snippet_start, p};
+use cargo_snippet_more::{p, snippet, snippet_end, snippet_start};
 
 #[snippet]
 pub fn dfs(pos: usize, g: &Vec<Vec<usize>>, visited: &mut Vec<bool>) {
@@ -81,3 +81,56 @@ impl UnionFind {
     }
 }
 snippet_end!("uf");
+
+snippet_start!(name = "dijkstra", library = "Dijkstra");
+const INF_DIJKSTRA: usize = 1 << 31;
+
+pub struct Dijkstra {
+    distance: Vec<usize>,
+    parent: Vec<usize>,
+}
+
+impl Dijkstra {
+    pub fn new(n: usize, edge: Vec<Vec<(usize, usize)>>, init: usize) -> Self {
+        let mut distance = vec![INF_DIJKSTRA; n];
+        let mut parent = vec![INF_DIJKSTRA; n];
+        let mut heap = std::collections::BinaryHeap::new();
+        for i in 0..n {
+            if i == init {
+                heap.push((std::cmp::Reverse(0), i));
+            }
+            heap.push((std::cmp::Reverse(INF_DIJKSTRA), i));
+        }
+        while let Some((std::cmp::Reverse(d), target)) = heap.pop() {
+            if distance[target] < d {
+                continue;
+            }
+            distance[target] = d;
+            for &(next, cost) in &edge[target] {
+                if distance[next] > d + cost {
+                    distance[next] = d + cost;
+                    heap.push((std::cmp::Reverse(distance[next]), next));
+                    parent[next] = target;
+                }
+            }
+        }
+        Self { distance, parent }
+    }
+
+    pub fn distance(&self, target: usize) -> usize {
+        self.distance[target]
+    }
+
+    pub fn get_path(&self, target: usize) -> Vec<usize> {
+        let mut current = target;
+        let mut res = vec![current];
+        while self.parent[current] != INF_DIJKSTRA {
+            let next = self.parent[current];
+            res.push(next);
+            current = next;
+        }
+        res.reverse();
+        res
+    }
+}
+snippet_end!("dijkstra");

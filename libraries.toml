@@ -64,6 +64,11 @@ content = "pub fn to_base (mut n : usize , b : usize ) -> usize {let mut v = Str
 
 [library.childs.graph.childs]
 
+[library.childs.graph.files.Dijkstra]
+name = "dijkstra"
+dependencies = []
+content = " const INF_DIJKSTRA : usize = 1 << 31 ; pub struct Dijkstra {distance : Vec < usize > , parent : Vec < usize > , } impl Dijkstra {pub fn new (n : usize , edge : Vec < Vec < (usize , usize ) > > , init : usize ) -> Self {let mut distance = vec ! [INF_DIJKSTRA ; n ] ; let mut parent = vec ! [INF_DIJKSTRA ; n ] ; let mut heap = std :: collections :: BinaryHeap :: new () ; for i in 0 .. n {if i == init {heap . push ((std :: cmp :: Reverse (0 ) , i ) ) ; } heap . push ((std :: cmp :: Reverse (INF_DIJKSTRA ) , i ) ) ; } while let Some ((std :: cmp :: Reverse (d ) , target ) ) = heap . pop () {if distance [target ] < d {continue ; } distance [target ] = d ; for & (next , cost ) in & edge [target ] {if distance [next ] > d + cost {distance [next ] = d + cost ; heap . push ((std :: cmp :: Reverse (distance [next ] ) , next ) ) ; parent [next ] = target ; } } } Self {distance , parent } } pub fn distance (& self , target : usize ) -> usize {self . distance [target ] } pub fn get_path (& self , target : usize ) -> Vec < usize > {let mut current = target ; let mut res = vec ! [current ] ; while self . parent [current ] != INF_DIJKSTRA {let next = self . parent [current ] ; res . push (next ) ; current = next ; } res . reverse () ; res } }  "
+
 [library.childs.graph.files.UnionFind]
 name = "uf"
 dependencies = []
@@ -101,27 +106,27 @@ content = " pub struct ISet < T > (usize , std :: marker :: PhantomData < T > ) 
 [library.childs.moreiter.files.MoreIter]
 name = "more_iter"
 dependencies = []
-content = ' pub trait MoreIter : Iterator {fn sum (self ) -> Self :: Item where Self : Sized , Self :: Item : std :: iter :: Sum , {Iterator :: sum (self ) } fn join_space (mut self ) -> String where Self : Sized , Self :: Item : std :: fmt :: Display , {itertools :: Itertools :: join (& mut self , " " ) } fn join_line (mut self ) -> String where Self : Sized , Self :: Item : std :: fmt :: Display , {itertools :: Itertools :: join (& mut self , "\n" ) } fn print_space (self ) where Self : Sized , Self :: Item : std :: fmt :: Display , {println ! ("{}" , self . join_space () ) ; } fn print_line (self ) where Self : Sized , Self :: Item : std :: fmt :: Display , {println ! ("{}" , self . join_line () ) ; } fn left_sorted < T : Ord , U > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , U ) > , {itertools :: Itertools :: sorted_by (self , | i , j | i . 0 . cmp (& j . 0 ) ) } fn right_sorted < T , U : Ord > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , U ) > , {itertools :: Itertools :: sorted_by (self , | i , j | i . 1 . cmp (& j . 1 ) ) } fn left < T , U > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , U ) > , {self . map (| (l , _ ) | l ) } fn right < T , U > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , U ) > , {self . map (| (_ , r ) | r ) } fn rle < T > (self ) -> impl Iterator where Self : Sized + Iterator , Self :: Item : PartialEq , {self . fold (std :: collections :: VecDeque :: new () , | mut acc , x | {if let Some ((l , v ) ) = acc . pop_back () {if l == x {acc . push_back ((l , v + 1 ) ) ; } else {acc . push_back ((l , v ) ) ; acc . push_back ((x , 1 ) ) ; } } else {acc . push_back ((x , 1 ) ) ; } acc } ) . into_iter () } fn filter_v < T : PartialEq > (self , v : & T ) -> impl Iterator where Self : Sized + Iterator < Item = T > , {self . filter (move | x | x == v ) } fn filter_not_v < T : PartialEq > (self , v : & T ) -> impl Iterator where Self : Sized + Iterator < Item = T > , {self . filter (move | x | x != v ) } } impl < I : Iterator + ? Sized > MoreIter for I {}  '
+content = ' pub trait MoreIter : Iterator {fn to_digit (self ) -> impl Iterator < Item = usize > where Self : Sized + Iterator < Item = char > , {self . map (| c | c . to_digit (10 ) . unwrap () as usize ) } fn sum (self ) -> Self :: Item where Self : Sized , Self :: Item : std :: iter :: Sum , {Iterator :: sum (self ) } fn join_space (mut self ) -> String where Self : Sized , Self :: Item : std :: fmt :: Display , {itertools :: Itertools :: join (& mut self , " " ) } fn join_line (mut self ) -> String where Self : Sized , Self :: Item : std :: fmt :: Display , {itertools :: Itertools :: join (& mut self , "\n" ) } fn print_space (self ) where Self : Sized , Self :: Item : std :: fmt :: Display , {println ! ("{}" , self . join_space () ) ; } fn print_line (self ) where Self : Sized , Self :: Item : std :: fmt :: Display , {println ! ("{}" , self . join_line () ) ; } fn left_sorted < T : Ord , U > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , U ) > , {itertools :: Itertools :: sorted_by (self , | i , j | i . 0 . cmp (& j . 0 ) ) } fn right_sorted < T , U : Ord > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , U ) > , {itertools :: Itertools :: sorted_by (self , | i , j | i . 1 . cmp (& j . 1 ) ) } fn left < T , U > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , U ) > , {self . map (| (l , _ ) | l ) } fn right < T , U > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , U ) > , {self . map (| (_ , r ) | r ) } fn rle (self ) -> impl Iterator where Self : Sized , Self :: Item : PartialEq , {self . fold (std :: collections :: VecDeque :: new () , | mut acc , x | {if let Some ((l , v ) ) = acc . pop_back () {if l == x {acc . push_back ((l , v + 1 ) ) ; } else {acc . push_back ((l , v ) ) ; acc . push_back ((x , 1 ) ) ; } } else {acc . push_back ((x , 1 ) ) ; } acc } ) . into_iter () } fn filter_v < T : PartialEq > (self , v : & T ) -> impl Iterator where Self : Sized + Iterator < Item = T > , {self . filter (move | x | x == v ) } fn filter_not_v < T : PartialEq > (self , v : & T ) -> impl Iterator where Self : Sized + Iterator < Item = T > , {self . filter (move | x | x != v ) } fn arg_sort < T : num :: Integer + Copy > (self ) -> impl Iterator where Self : Sized + Iterator < Item = (T , T ) > , {itertools :: Itertools :: sorted_by (self , | & (x0 , y0 ) , & (x1 , y1 ) | {((y0 , x0 ) < (num :: zero () , num :: zero () ) ) . cmp (& ((y1 , x1 ) < (num :: zero () , num :: zero () ) ) ) . then_with (| | (x1 * y0 ) . cmp (& (x0 * y1 ) ) ) } ) } } impl < I : Iterator + ? Sized > MoreIter for I {}  '
 
 [library.files.heap]
 name = "heap"
 dependencies = []
-content = "# [macro_export ] macro_rules ! heap {($ ($ x : expr ) ,* $ (, ) ? ) => {{let mut heap = :: std :: collections :: BinaryHeap :: new () ; $ (heap . push ($ x ) ; ) * heap } } ; } "
+content = "# [macro_export ] macro_rules ! heap {($ ($ x : expr ) ,* $ (, ) ? ) => {{# [allow (unused_mut ) ] let mut heap = :: std :: collections :: BinaryHeap :: new () ; $ (heap . push ($ x ) ; ) * heap } } ; } "
 
 [library.files.map]
 name = "map"
 dependencies = []
-content = "# [macro_export ] macro_rules ! map {($ ($ key : expr =>$ val : expr ) ,* $ (, ) ? ) => {{let mut map = :: std :: collections :: BTreeMap :: new () ; $ (map . insert ($ key , $ val ) ; ) * map } } ; } "
+content = "# [macro_export ] macro_rules ! map {($ ($ key : expr =>$ val : expr ) ,* $ (, ) ? ) => {{# [allow (unused_mut ) ] let mut map = :: std :: collections :: BTreeMap :: new () ; $ (map . insert ($ key , $ val ) ; ) * map } } ; } "
 
 [library.files.que]
 name = "que"
 dependencies = []
-content = "# [macro_export ] macro_rules ! que {($ ($ x : expr ) ,* $ (, ) ? ) => {{let mut que = :: std :: collections :: VecDeque :: new () ; $ (que . push_back ($ x ) ; ) * que } } ; } "
+content = "# [macro_export ] macro_rules ! que {($ ($ x : expr ) ,* $ (, ) ? ) => {{# [allow (unused_mut ) ] let mut que = :: std :: collections :: VecDeque :: new () ; $ (que . push_back ($ x ) ; ) * que } } ; } "
 
 [library.files.set]
 name = "set"
 dependencies = []
-content = "# [macro_export ] macro_rules ! set {($ ($ x : expr ) ,* $ (, ) ? ) => {{let mut set = :: std :: collections :: BTreeSet :: new () ; $ (set . insert ($ x ) ; ) * set } } ; } "
+content = "# [macro_export ] macro_rules ! set {($ ($ x : expr ) ,* $ (, ) ? ) => {{# [allow (unused_mut ) ] let mut set = :: std :: collections :: BTreeSet :: new () ; $ (set . insert ($ x ) ; ) * set } } ; } "
 
 [library.files.update_max]
 name = "update_max"
@@ -150,6 +155,12 @@ Path = "graph"
 
 [[pathes.dfs]]
 Name = "dfs"
+
+[[pathes.dijkstra]]
+Path = "graph"
+
+[[pathes.dijkstra]]
+Name = "Dijkstra"
 
 [[pathes.direction]]
 Path = "collection"

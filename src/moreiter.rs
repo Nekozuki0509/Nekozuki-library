@@ -112,6 +112,17 @@ pub trait MoreIter: Iterator {
     {
         self.filter(move |x| x != v)
     }
+
+    fn arg_sort<T: num::Integer + Copy>(self) -> impl Iterator
+    where
+        Self: Sized + Iterator<Item = (T, T)>,
+    {
+        itertools::Itertools::sorted_by(self, |&(x0, y0), &(x1, y1)| {
+            ((y0, x0) < (num::zero(), num::zero()))
+                .cmp(&((y1, x1) < (num::zero(), num::zero())))
+                .then_with(|| (x1 * y0).cmp(&(x0 * y1)))
+        })
+    }
 }
 
 impl<I: Iterator + ?Sized> MoreIter for I {}
