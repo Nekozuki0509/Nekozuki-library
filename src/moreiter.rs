@@ -104,7 +104,7 @@ pub trait MoreIter: Iterator + Sized {
     {
         self.map(|c| c.to_digit(10).unwrap() as usize)
     }
-    fn sum(self) -> Self::Item
+    fn sume(self) -> Self::Item
     where
         Self::Item: std::iter::Sum,
     {
